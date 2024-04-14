@@ -1,0 +1,36 @@
+{
+  "name": "server",
+  "version": "0.0.1",
+  "description": "backend server",
+  "main": "server.js",
+  "scripts": {
+    "test": "test",
+    "build": "tsc",
+    "start": "cross-env NODE_ENV=PRD node -r dotenv/config ./js/server.js dotenv_config_path=.env.dev ",
+    "dev": "nodemon"
+  },
+  "repository": {
+    "type": "git",
+    "url": "none"
+  },
+  "keywords": [
+    "none"
+  ],
+  "author": "kwjung",
+  "license": "ISC",
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mysql2": "^3.9.4",
+    "winston": "^3.13.0",
+    "winston-daily-rotate-file": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.7",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}
