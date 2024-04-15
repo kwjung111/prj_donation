@@ -13,3 +13,13 @@ server.listen(port, () => {
     logger.info(`server listening at ${port}!`)
 });
 
+
+//TEST
+import{ createUser } from './svc/authSvc'
+
+const user = {
+    id : 1,
+    
+}
+
+createUser()

@@ -8,6 +8,7 @@
     "build": "tsc",
     "start": "cross-env NODE_ENV=PRD node -r dotenv/config ./js/server.js dotenv_config_path=.env.dev ",
     "migrate": "dotenv -e .env.dev prisma migrate dev",
+    "models:dev" : "dotenv -e .env.dev npx prisma studio",
     "dev": "nodemon"
   },
   "repository": {
