@@ -70,6 +70,13 @@ const logger = winston.createLogger({
        maxFiles: 30,
        zippedArchive: true,
     }),
+    new winston.transports.Console({
+        format: winston.format.combine(
+            winston.format.colorize(),
+            timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+            logFormat,
+        )
+    })
  ],
 })
 
