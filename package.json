@@ -8,7 +8,7 @@
     "build": "tsc",
     "start": "cross-env NODE_ENV=PRD node -r dotenv/config ./js/server.js dotenv_config_path=.env.dev ",
     "migrate": "dotenv -e .env.dev prisma migrate dev",
-    "models:dev" : "dotenv -e .env.dev npx prisma studio",
+    "models:dev": "dotenv -e .env.dev npx prisma studio",
     "dev": "nodemon"
   },
   "repository": {
@@ -23,8 +23,10 @@
   "dependencies": {
     "@prisma/client": "^5.12.1",
     "cross-env": "^7.0.3",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.9.4",
     "winston": "^3.13.0",
     "winston-daily-rotate-file": "^5.0.0"
