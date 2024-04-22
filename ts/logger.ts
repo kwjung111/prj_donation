@@ -1,96 +1,68 @@
 import winston from 'winston';
 import winstonDaily from 'winston-daily-rotate-file';
+import config from './config'
 const env = process.env.NODE_ENV;
-const { combine, timestamp, label, printf  } = winston.format;
+const { combine, timestamp, label, printf } = winston.format;
 
-let logLevel = 'debug'
-
-if(env !== 'PRD'){
-    logLevel = 'data'
-}
-
-const config = {
-    levels : {
-        error: 0,
-        warn : 1,
-        info: 2,
-        debug: 3,
-        data: 4,
-        verbose: 5,
-        silly: 6,
-        custom: 7
-    },
-    colors: { 
-        error: 'red',
-        info: 'green',
-        warn: 'yellow',
-        debug: 'blue',
-        data: 'magenta',
-        verbose: 'cyan',
-        silly: 'grey',
-        custom: 'yellow'
-    }
-}
-
-
-//* 로그 파일 저장 경로 → 루트 경로/logs 폴더
-const logDir : string = `${process.cwd()}/logs`;
-
-//* log 출력 포맷 정의 함수
-const logFormat = printf((info: winston.Logform.TransformableInfo)  => {
+// log 출력 포맷
+const logFormat = printf((info: winston.Logform.TransformableInfo) => {
     return `${info.timestamp} [${info.level}] ▶ ${info.message}`; // 날짜 [시스템이름] 로그레벨 메세지
- });
+});
 
- 
+// 로그 파일 경로 : root/logs 폴더
+const logDir: string = `${process.cwd()}/logs`;
 
-const logger = winston.createLogger({
-    levels: config.levels,
-    level : logLevel,
-    format: combine(
-    timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-    logFormat,
-    ),
-    transports:[
-        new winstonDaily({
-            level:'info',
-            datePattern: "YYYY-MM-DD",
-            dirname:logDir,
-            filename:"%DATE%.log",
-            maxSize:"30m",
-            maxFiles: "30d"
+const transports = [];
+if (config.env !== 'DEV') {
+    transports.push(
+        new winston.transports.Console()
+    )
+} else {
+    transports.push(
+        new winston.transports.Console({
+            format: combine(
+                winston.format.cli(),
+                winston.format.splat(),
+                winston.format.json(),
+                logFormat,
+            )
         })
-    ],
-    
-    exceptionHandlers: [
+    )
+}
+transports.push(
     new winstonDaily({
-       level: 'error',
-       datePattern: 'YYYY-MM-DD',
-       dirname: logDir,
-       filename: `%DATE%.exception.log`,
-       maxFiles: 30,
-       zippedArchive: true,
-    }),
-    new winston.transports.Console({
-        format: winston.format.combine(
-            winston.format.colorize(),
-            timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-            logFormat,
-        )
-    })
- ],
-})
-
-winston.addColors(config.colors)
-
-
-logger.add(
-    new winston.transports.Console({
-        format: winston.format.combine(
-            winston.format.colorize(),
-            timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-            logFormat,
-        )
+        level: 'info',
+        datePattern: "YYYY-MM-DD",
+        dirname: logDir,
+        filename: "%DATE%.log",
+        maxSize: "30m",
+        maxFiles: "30d"
     })
 )
+
+const logger = winston.createLogger({
+    level: config.logLevel,
+    levels: winston.config.npm.levels,
+    format: combine(
+        timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        winston.format.errors({ stack: true }),
+        winston.format.splat(),
+        winston.format.json(),
+        logFormat,
+    ),
+    transports: transports,
+    exceptionHandlers: [
+        new winston.transports.Console(),
+        new winstonDaily({
+            level: 'error',
+            datePattern: 'YYYY-MM-DD',
+            dirname: logDir,
+            filename: `%DATE%.exception.log`,
+            maxFiles: 30,
+            zippedArchive: true,
+        }),
+    ],
+})
+
 
 export default logger;
