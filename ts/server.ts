@@ -20,24 +20,7 @@ server.use('/signUp', signUpRouter);
 
 server.listen(port, () => {
     logger.info(`server listening at ${port}!`)
-});
-
-/*
-
-const authservice = new authSvc();
-
-const user : userDto = {
-    id : 1
-    ,name : 'ww'
-    ,email : null
-    ,phone : null
-    ,regDtm : new Date()
-    ,modDtm : new Date()
-}
-
-authservice.createUser(user);
-authservice.getAllUsers(5)
-.then( (res) => {
-    console.log(res)
+}).on('error', err => {
+    logger.error(err);
+    process.exit(1)
 })
-*/
