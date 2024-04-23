@@ -6,7 +6,7 @@ const { combine, timestamp, label, printf } = winston.format;
 
 // log 출력 포맷
 const logFormat = printf((info: winston.Logform.TransformableInfo) => {
-    return `${info.timestamp} [${info.level}] ▶ ${info.message}`; // 날짜 [시스템이름] 로그레벨 메세지
+    return `${info.timestamp} [${info.level}] ▶ ${JSON.stringify(info.message)}`; // 날짜 [시스템이름] 로그레벨 메세지
 });
 
 // 로그 파일 경로 : root/logs 폴더
@@ -21,7 +21,7 @@ if (config.env !== 'DEV') {
     transports.push(
         new winston.transports.Console({
             format: combine(
-                winston.format.cli(),
+                winston.format.colorize(),
                 winston.format.splat(),
                 winston.format.json(),
                 logFormat,
@@ -35,8 +35,8 @@ transports.push(
         datePattern: "YYYY-MM-DD",
         dirname: logDir,
         filename: "%DATE%.log",
-        maxSize: "30m",
-        maxFiles: "30d"
+        //maxSize: "30m",
+        maxFiles: 30
     })
 )
 
@@ -45,10 +45,10 @@ const logger = winston.createLogger({
     levels: winston.config.npm.levels,
     format: combine(
         timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-        winston.format.errors({ stack: true }),
+        winston.format.errors({stack : true}),
         winston.format.splat(),
         winston.format.json(),
-        logFormat,
+        logFormat
     ),
     transports: transports,
     exceptionHandlers: [
