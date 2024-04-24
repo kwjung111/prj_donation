@@ -17,5 +17,3 @@ async function start() {
 }
 
 start();
-
-throw new Error('eeee')
