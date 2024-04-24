@@ -1,7 +1,6 @@
 import winston from 'winston';
 import winstonDaily from 'winston-daily-rotate-file';
-import config from './config'
-const env = process.env.NODE_ENV;
+import config from '../config'
 const { combine, timestamp, label, printf } = winston.format;
 
 // log 출력 포맷
@@ -21,6 +20,7 @@ if (config.env !== 'DEV') {
     transports.push(
         new winston.transports.Console({
             format: combine(
+                winston.format.errors({stack : true}),
                 winston.format.colorize(),
                 winston.format.splat(),
                 winston.format.json(),
@@ -29,13 +29,13 @@ if (config.env !== 'DEV') {
         })
     )
 }
+
 transports.push(
     new winstonDaily({
         level: 'info',
         datePattern: "YYYY-MM-DD",
         dirname: logDir,
         filename: "%DATE%.log",
-        //maxSize: "30m",
         maxFiles: 30
     })
 )
@@ -48,7 +48,7 @@ const logger = winston.createLogger({
         winston.format.errors({stack : true}),
         winston.format.splat(),
         winston.format.json(),
-        logFormat
+        logFormat,
     ),
     transports: transports,
     exceptionHandlers: [
@@ -59,7 +59,6 @@ const logger = winston.createLogger({
             dirname: logDir,
             filename: `%DATE%.exception.log`,
             maxFiles: 30,
-            zippedArchive: true,
         }),
     ],
 })
