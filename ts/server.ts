@@ -1,24 +1,21 @@
 import express from 'express'
 import config from './config'
-import logger from './logger'
-
-const server = express();
-
-//body parser 
-server.use(express.json())
+import logger from './loaders/logger'
 
 
-import signUpRouter from './routes/signUpRouter';
-server.use('/signUp', signUpRouter);
+async function start() {
+    const server = express();
 
-const test = {
-    a : "test"
-    ,b : "notest"
+    await require('./loaders').default({ expressApp: server });
+
+    server.listen(config.port, () => {
+        logger.info(`${config.env} server listening at ${config.port}!`)
+    }).on('error', err => {
+        logger.error(err);
+        process.exit(1)
+    })
 }
 
-server.listen(config.port, () => {
-    logger.info(`${config.env} server listening at ${config.port}!`)
-}).on('error', err => {
-    logger.error(err);
-    process.exit(1)
-})
+start();
+
+throw new Error('eeee')
